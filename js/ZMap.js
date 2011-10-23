@@ -2,37 +2,73 @@ function ZMap(){
 	this.w  = 400;
 	this.h = 300;
 	
-	this.focus = {x: parseInt(this.w/2), y:parseInt(this.h/2)}
+	this.playerPos = {"x": 0, "y":0};
 	
 	this.actorMap = [];
 	this.objectMap = [];
 	this.terrainMap = [];
 	
+	this.initMap();
 	this.randomTown();
 }
 
-//int between lo(inclusive) and hi(exclusive)
-function rand(lo, hi){
-	if (hi >= lo)
-		return Math.floor(Math.random()*(hi-lo)+lo);
-	else 
-		return Math.random()*(lo-hi)+hi;
-}
+
 
 ZMap.prototype = {
-	randomTown: function(){
-		var wideRoad;
-		var plots = []; 		//{upperLeftCornerX:int, upperLeftCornerY:int, width:int, height:int}
-		var vertRoads = []; //{centerX:int, wideOrNot:bool}
-		var horRoads = []; 	//{centerY:int, wideOrNot:bool}
+	getAppearance: function(x,y){
+		var obj = {};
 		
-		//Initilize to blank
+		if (this.playerPos.x == x && this.playerPos.y == y){
+			obj.color = "rgb(255, 0, 0)";
+			obj.char = "H";
+		}	else if (this.actorMap[y][x] != null){
+			
+		} else if (this.objectMap[y][x].length > 0){
+			
+		} else {
+			obj.color = this.terrainMap[y][x].color;
+			obj.char = this.terrainMap[y][x].char;
+		}
+		
+		obj.nWall = this.terrainMap[y][x].nWall;
+		obj.sWall = this.terrainMap[y][x].sWall;
+		obj.eWall = this.terrainMap[y][x].eWall;
+		obj.wWall = this.terrainMap[y][x].wWall;
+		
+		return obj;
+	},
+	
+	initMap: function(){
+		//Initialize Actor Map to None
+		for (var i=0; i < this.h; i++){
+			this.actorMap[i] = [];
+			for (var j=0; j< this.w; j++){
+				this.actorMap[i][j] = null;
+			}
+		}
+		
+		//Initialize Object Map to None
+		for (var i=0; i < this.h; i++){
+			this.objectMap[i] = [];
+			for (var j=0; j< this.w; j++){
+				this.objectMap[i][j] = [];
+			}
+		}
+		
+		//Initilize terrain to grass
 		for (var i=0; i < this.h; i++){
 			this.terrainMap[i] = [];
 			for (var j=0; j< this.w; j++){
 				this.terrainMap[i][j] = new ZTerrain("grass");
 			}
 		}
+	},
+	
+	randomTown: function(){
+		var wideRoad;
+		var plots = []; 		//{upperLeftCornerX:int, upperLeftCornerY:int, width:int, height:int}
+		var vertRoads = []; //{centerX:int, wideOrNot:bool}
+		var horRoads = []; 	//{centerY:int, wideOrNot:bool}
 		
 		//Draw vertical roads at random intervals
 		var randVRoad = rand(0,15);

@@ -1,8 +1,6 @@
 function ZView(){
-	//console.log("new ZView");
-		
-	this.w = 30;
-	this.h = 15;
+	this.w = 50;
+	this.h = 25;
 	this.yOff = 0;
 	this.xOff = 0;
 	this.lastMove = [0,0];
@@ -10,7 +8,6 @@ function ZView(){
 	this.map = new ZMap();
 	this.canvas = [];
 	this.initView();
-	//this.generateCanvas();
 	this.render();
 	
 	if (document.layers) { document.captureEvents(Event.KEYPRESS); }
@@ -54,9 +51,7 @@ ZView.prototype = {
 			default:
 				break;
 		}
-		
 		view.render();
-		
 	},
 	
 	initView: function(){
@@ -75,20 +70,21 @@ ZView.prototype = {
 		
 		for (var y=0; y<this.h; y++){
 			for(var x=0; x<this.w; x++){
-				$("#cell"+x+"-"+y).css("color", this.map.terrainMap[y+this.yOff][x+this.xOff].color)
+				var display = this.map.getAppearance(x,y);
+				$("#cell"+x+"-"+y).css("color", display.color)
 													.css("border-top", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.style+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color)
+																						display.nWall.style+" "+
+																						display.nWall.color)
 													.css("border-bottom", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.style+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color)
+																						display.sWall.style+" "+
+																						display.sWall.color)
 													.css("border-left", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.style+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color)
+																						display.wWall.style+" "+
+																						display.wWall.color)
 													.css("border-right", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color)
-													.html(this.map.terrainMap[y+this.yOff][x+this.xOff].char);
+																						display.eWall.style+" "+
+																						display.eWall.color)
+													.html(display.char);
 			}
 		}
 	},
@@ -97,107 +93,51 @@ ZView.prototype = {
 		for (var x=0; x<this.w; x++){
 			for (var y=0; y<this.h; y++){
 				var cell = $("#cell"+x+"-"+y);
+				var next = this.map.getAppearance(x+this.xOff,y+this.yOff);		//this.map.terrainMap[y+this.yOff][x+this.xOff];
+				var last = this.map.getAppearance(x+this.xOff+this.lastMove[0],
+																					y+this.yOff+this.lastMove[1]);//this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]];
 				
 				//Update cell font color or character if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].color != this.map.terrainMap[(y+this.yOff+this.lastMove[1])][(x+this.xOff+this.lastMove[0])].color ?
-					cell.css("color", this.map.terrainMap[y+this.yOff][x+this.xOff].color) : null;
+				next.color != last.color ?
+					cell.css("color", next.color) : null;
 					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].char != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].char ?
-					cell.html(this.map.terrainMap[y+this.yOff][x+this.xOff].char) : null;
+				next.char != last.char ?
+					cell.html(next.char) : null;
 					
 				//Update nWall color or style if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].nWall.color ?
-					cell.css("border-top-color", this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color) : null;
+				next.nWall.color != last.nWall.color ?
+					cell.css("border-top-color", next.nWall.color) : null;
 					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.style != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].nWall.style ?
-					cell.css("border-top-style", this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.style) : null;
+				next.nWall.style != last.nWall.style ?
+					cell.css("border-top-style", next.nWall.style) : null;
 					
 				//Update sWall color or style if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].sWall.color ?
-					cell.css("border-bottom-color", this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color) : null;
+				next.sWall.color != last.sWall.color ?
+					cell.css("border-bottom-color", next.sWall.color) : null;
 					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.style != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].sWall.style ?
-					cell.css("border-bottom-style", this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.style) : null;
-					
-				//Update eWall color or style if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].eWall.color ?
-					cell.css("border-bottom-color", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color) : null;
-					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].eWall.style ?
-					cell.css("border-bottom-style", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style) : null;
+				next.sWall.style != last.sWall.style ?
+					cell.css("border-bottom-style", next.sWall.style) : null;
 					
 				//Update eWall color or style if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].eWall.color ?
-					cell.css("border-bottom-color", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color) : null;
+				next.eWall.color != last.eWall.color ?
+					cell.css("border-bottom-color", next.eWall.color) : null;
 					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].eWall.style ?
-					cell.css("border-bottom-style", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style) : null;
+				next.eWall.style != last.eWall.style ?
+					cell.css("border-bottom-style", next.eWall.style) : null;
+					
+				//Update eWall color or style if necessary
+				next.eWall.color != last.eWall.color ?
+					cell.css("border-bottom-color", next.eWall.color) : null;
+					
+				next.eWall.style != last.eWall.style ?
+					cell.css("border-bottom-style", next.eWall.style) : null;
 					
 				//Update wWall color or style if necessary
-				this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].wWall.color ?
-					cell.css("border-bottom-color", this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color) : null;
+				next.wWall.color != last.wWall.color ?
+					cell.css("border-bottom-color", next.wWall.color) : null;
 					
-				this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.style != this.map.terrainMap[y+this.yOff+this.lastMove[1]][x+this.xOff+this.lastMove[0]].wWall.style ?
-					cell.css("border-bottom-style", this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.style) : null;
-					
-				
-				/*
-				var cell = $("#cell"+x+"-"+y);
-				
-				
-				
-				
-				(cell.css("color") != this.map.terrainMap[y+this.yOff][x+this.xOff].color) ?
-					cell.css("color", this.map.terrainMap[y+this.yOff][x+this.xOff].color) : null;
-				
-				(cell.css("border-top-color") != this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color) ?
-					cell.css("border-top-color", this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color) : null;
-					
-				(cell.css("border-top-style") != this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.style) ?
-					cell.css("border-top-style", this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.style) : null;
-					
-				
-				(cell.css("border-bottom-color") != this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color) ?
-					cell.css("border-bottom-color", this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color) : null;
-					
-				(cell.css("border-bottom-style") != this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.style) ?
-					cell.css("border-bottom-style", this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.style) : null;
-					
-					
-				(cell.css("border-right-color") != this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color) ?
-					cell.css("border-right-color", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color) : null;
-					
-				(cell.css("border-right-style") != this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style) ?
-					cell.css("border-right-style", this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.style) : null;
-					
-					
-				(cell.css("border-left-color") != this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color) ?
-					cell.css("border-left-color", this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color) : null;
-					
-				(cell.css("border-left-style") != this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.style) ?
-					cell.css("border-left-style", this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.style) : null;
-					
-				(cell.html() != this.map.terrainMap[y+this.yOff][x+this.xOff].char) ?
-					cell.html(this.map.terrainMap[y+this.yOff][x+this.xOff].char) : null;
-				*/
-				
-				/*
-				$("#cell"+x+"-"+y).css("color", this.map.terrainMap[y+this.yOff][x+this.xOff].color)
-													.css("border-top", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.line+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].nWall.color)
-													.css("border-bottom", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.line+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].sWall.color)
-													.css("border-left", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.line+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].wWall.color)
-													.css("border-right", "1px "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.line+" "+
-																						this.map.terrainMap[y+this.yOff][x+this.xOff].eWall.color)
-													.html(this.map.terrainMap[y+this.yOff][x+this.xOff].char);
-													* 
-													**/
+				next.wWall.style != last.wWall.style ?
+					cell.css("border-bottom-style", next.wWall.style) : null;
 			}
 		}
 	},

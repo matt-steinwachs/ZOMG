@@ -10,11 +10,5 @@ function ZObject(type){
 }
 
 ZObject.prototype = {
-	sayTest: function(){
-		console.log("test");
-	},
 	
-	sayShit: function(){
-		console.log('shit');
-	}
 }
