@@ -2,7 +2,7 @@ function ZMap(){
 	this.w  = 400;
 	this.h = 300;
 	
-	this.playerPos = {"x": 0, "y":0};
+	this.player = new ZPlayer(this);
 	
 	this.actorMap = [];
 	this.objectMap = [];
@@ -18,10 +18,7 @@ ZMap.prototype = {
 	getAppearance: function(x,y){
 		var obj = {};
 		
-		if (this.playerPos.x == x && this.playerPos.y == y){
-			obj.color = "rgb(255, 0, 0)";
-			obj.char = "H";
-		}	else if (this.actorMap[y][x] != null){
+		if (this.actorMap[y][x] != null){
 			
 		} else if (this.objectMap[y][x].length > 0){
 			
