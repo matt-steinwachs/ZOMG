@@ -2,7 +2,7 @@ function ZWall(type){
 	this.type = type;
 	
 	this.color;		//Color drawn on map
-	this.line;		//Border stroke style
+	this.style;		//Border stroke style
 	this.pass;		//Can actor pass through
 	this.vis;			//Can actor see through
 	
@@ -11,29 +11,29 @@ function ZWall(type){
 
 ZWall.prototype = {
 	none: function(){
-		this.color = "black";
-		this.line = "solid";
+		this.color = "rgb(0, 0, 0)";
+		this.style = "solid";
 		this.pass = true;
 		this.vis = true;
 	},
 	
 	shortWoodFence: function(){
-		this.color = "brown";
-		this.line = "dashed";
+		this.color = "rgb(139, 105, 20)";
+		this.style = "dashed";
 		this.pass = true;
 		this.vis = true;
 	},
 	
 	tallWoodFence: function(){
-		this.color = "brown";
-		this.line = "solid";
+		this.color = "rgb(139, 105, 20)";
+		this.style = "solid";
 		this.pass = false;
 		this.vis = false;
 	},
 	
 	chainLinkFence: function(){
-		this.color = "grey";
-		this.line = "dashed";
+		this.color = "rgb(191, 191, 191)";
+		this.style = "dashed";
 	},
 	
 	doorOpen: function(){

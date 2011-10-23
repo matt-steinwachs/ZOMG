@@ -16,26 +16,26 @@ ZTerrain.prototype = {
 	//Terrain type initializers
 	grass: function(){
 		this.char = "\"";
-		this.color = "#039102";
+		this.color = "rgb(3, 145, 2)";
 	},
 	
 	roadVDash: function(){
 		this.char = "|";
-		this.color = "#FFFD02";
+		this.color = "rgb(255, 253, 2)";
 	},
 	
 	roadPlain: function(){
 		this.char = ".";
-		this.color = "#333333";
+		this.color = "rgb(51, 51, 51)";
 	},
 	
 	roadHDash: function(){
 		this.char = "-";
-		this.color = "#FFFD02";
+		this.color = "rgb(255, 253, 2)";
 	},
 	
 	sidewalk: function(){
 		this.char = "#";
-		this.color = "#555555";
+		this.color = "rgb(85, 85, 85)";
 	},
 }
