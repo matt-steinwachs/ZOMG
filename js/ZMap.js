@@ -176,6 +176,24 @@ ZMap.prototype = {
 			}
 		}
 		
+		for (var y=1; y < plots.length; y++){
+			for (var x=0; x < plots[y].length; x++){
+				for (var h=0; h <= plots[y][x].h; h++){
+					this.terrainMap[plots[y][x].y+h][plots[y][x].x].wWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y+h][plots[y][x].x-1].eWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y+h][plots[y][x].x + plots[y][x].w].eWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y+h][plots[y][x].x + plots[y][x].w + 1].wWall = new ZWall("tallWoodFence");
+				}
+				
+				for (var w=0; w <= plots[y][x].w; w++){
+					this.terrainMap[plots[y][x].y][plots[y][x].x + w].nWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y-1][plots[y][x].x + w].sWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y + plots[y][x].h][plots[y][x].x + w].sWall = new ZWall("tallWoodFence");
+					this.terrainMap[plots[y][x].y + plots[y][x].h + 1][plots[y][x].x + w].nWall = new ZWall("tallWoodFence");
+				}
+			}
+		}
+		
 		console.log(plots);
 	}
 	

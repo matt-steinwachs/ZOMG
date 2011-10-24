@@ -1,6 +1,6 @@
 function ZView(){
-	this.w = 50;
-	this.h = 25;
+	this.w = 31;
+	this.h = 21;
 	this.yOff = 0;
 	this.xOff = 0;
 	this.lastMove = [0,0];
@@ -129,24 +129,17 @@ ZView.prototype = {
 					
 				//Update eWall color or style if necessary
 				next.eWall.color != last.eWall.color ?
-					cell.css("border-bottom-color", next.eWall.color) : null;
+					cell.css("border-right-color", next.eWall.color) : null;
 					
 				next.eWall.style != last.eWall.style ?
-					cell.css("border-bottom-style", next.eWall.style) : null;
-					
-				//Update eWall color or style if necessary
-				next.eWall.color != last.eWall.color ?
-					cell.css("border-bottom-color", next.eWall.color) : null;
-					
-				next.eWall.style != last.eWall.style ?
-					cell.css("border-bottom-style", next.eWall.style) : null;
+					cell.css("border-right-style", next.eWall.style) : null;
 					
 				//Update wWall color or style if necessary
 				next.wWall.color != last.wWall.color ?
-					cell.css("border-bottom-color", next.wWall.color) : null;
+					cell.css("border-left-color", next.wWall.color) : null;
 					
 				next.wWall.style != last.wWall.style ?
-					cell.css("border-bottom-style", next.wWall.style) : null;
+					cell.css("border-left-style", next.wWall.style) : null;
 				
 				
 			}
