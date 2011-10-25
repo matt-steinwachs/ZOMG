@@ -36,7 +36,7 @@ ZMap.prototype = {
 	},
 	
 	initMap: function(){
-		//Initialize Actor Map to None
+		//Initialize Actor Map to null
 		for (var i=0; i < this.h; i++){
 			this.actorMap[i] = [];
 			for (var j=0; j< this.w; j++){
@@ -44,7 +44,7 @@ ZMap.prototype = {
 			}
 		}
 		
-		//Initialize Object Map to None
+		//Initialize Object Map to []
 		for (var i=0; i < this.h; i++){
 			this.objectMap[i] = [];
 			for (var j=0; j< this.w; j++){
@@ -104,7 +104,7 @@ ZMap.prototype = {
 				}
 			}
 			
-			randVRoad += rand(20, 40);
+			randVRoad += rand(40, 61);
 		}
 		
 		//Draw horizontal roads at random intervals
@@ -161,21 +161,26 @@ ZMap.prototype = {
 							this.terrainMap[randHRoad+2][i] = new ZTerrain("sidewalk");
 				}
 			}
-			randHRoad += rand(20, 40);
+			randHRoad += rand(40, 61);
 		}
 		
 		for (var y=1; y < horRoads.length; y++){
 			plots[y] = []
 			for (var x=1; x < vertRoads.length; x++){
-				plots[y].push({"x":vertRoads[x-1].x + (vertRoads[x-1].wide? 4 : 3),
-									 "y":horRoads[y-1].y + (horRoads[y-1].wide? 4 : 3),
-									 "w":(vertRoads[x].x - (vertRoads[x].wide? 4 : 3)) -
-											 (vertRoads[x-1].x + (vertRoads[x-1].wide? 4 : 3)),
-									 "h":(horRoads[y].y - (horRoads[y].wide? 4 : 3)) -
-											 (horRoads[y-1].y + (horRoads[y-1].wide? 4 : 3))});
+				plots[y].push({	"x":vertRoads[x-1].x + (vertRoads[x-1].wide? 4 : 3),
+												"y":horRoads[y-1].y + (horRoads[y-1].wide? 4 : 3),
+												"w":(vertRoads[x].x - (vertRoads[x].wide? 4 : 3)) -
+														 (vertRoads[x-1].x + (vertRoads[x-1].wide? 4 : 3)),
+												"h":(horRoads[y].y - (horRoads[y].wide? 4 : 3)) -
+														 (horRoads[y-1].y + (horRoads[y-1].wide? 4 : 3)),
+												"used":false
+											});
 			}
 		}
 		
+		
+		//Draw tall fences around all non-edge plots.
+		/*
 		for (var y=1; y < plots.length; y++){
 			for (var x=0; x < plots[y].length; x++){
 				for (var h=0; h <= plots[y][x].h; h++){
@@ -193,8 +198,75 @@ ZMap.prototype = {
 				}
 			}
 		}
+		*/
+		var dirs = ["up","down","left","right"];
 		
-		console.log(plots);
-	}
+		//draw four houses on a plot
+		for (var y=1; y < plots.length; y++){
+			for (var x=0; x < plots[y].length; x++){
+				var topLeftSubPlot = {"x": plots[y][x].x,
+															"y": plots[y][x].y,
+															"w": Math.floor(plots[y][x].w/2),
+															"h": Math.floor(plots[y][x].h/2)
+														 };
+														 
+				var topRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w+1,
+															"y": plots[y][x].y,
+															"w": Math.ceil(plots[y][x].w/2)-1,
+															"h": Math.floor(plots[y][x].h/2)
+														 };
+														 
+				var botLeftSubPlot = {"x": plots[y][x].x,
+															"y": plots[y][x].y + topLeftSubPlot.h+1,
+															"w": Math.floor(plots[y][x].w/2),
+															"h": Math.ceil(plots[y][x].h/2)-1
+														 };
+														 
+				var botRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w+1,
+															"y": plots[y][x].y + topLeftSubPlot.h+1,
+															"w": Math.ceil(plots[y][x].w/2)-1,
+															"h": Math.ceil(plots[y][x].h/2)-1
+														 };
+														 
+				
+				this.house(topLeftSubPlot, dirs[rand(0,2)*2]);
+				this.house(topRightSubPlot, dirs[rand(0,2)*3]);
+				this.house(botLeftSubPlot, dirs[rand(1,3)]);
+				this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]);
+			}
+		}
+		
+		//console.log(plots);
+	},
+	
+	house: function(plot, dir){
+		//Draw fences
+		for (var h=0; h <= plot.h; h++){
+			if(dir != "left"){
+				//left fence
+				this.terrainMap[plot.y+h][plot.x].wWall = new ZWall("tallWoodFence");
+				this.terrainMap[plot.y+h][plot.x-1].eWall = new ZWall("tallWoodFence");
+			}
+			if (dir != "right"){
+				//right fence
+				this.terrainMap[plot.y+h][plot.x + plot.w].eWall = new ZWall("tallWoodFence");
+				this.terrainMap[plot.y+h][plot.x + plot.w + 1].wWall = new ZWall("tallWoodFence");
+			}	
+		}
+		
+		for (var w=0; w <= plot.w; w++){
+			if (dir != "up"){
+				//top fence
+				this.terrainMap[plot.y][plot.x + w].nWall = new ZWall("tallWoodFence");
+				this.terrainMap[plot.y-1][plot.x + w].sWall = new ZWall("tallWoodFence");
+			}
+			if (dir != "down"){
+				//bottom fence
+				this.terrainMap[plot.y + plot.h][plot.x + w].sWall = new ZWall("tallWoodFence");
+				this.terrainMap[plot.y + plot.h + 1][plot.x + w].nWall = new ZWall("tallWoodFence");
+			}
+		}
+		
+	},
 	
 }
