@@ -24,7 +24,9 @@ ZView.prototype = {
 		switch(keyString){
 			case "a":
 				view.lastPlayerMove = view.map.player.moveLeft();
-				if (view.xOff > 0 && view.map.player.pos.x - view.xOff < view.w/2){
+				if (view.xOff > 0 && 
+						view.map.player.pos.x - view.xOff < view.w/2 &&
+						(view.lastPlayerMove[0] != 0 || view.lastPlayerMove[1] != 0)){
 					view.xOff--;
 					view.lastMove = [1,0];
 					
@@ -33,7 +35,9 @@ ZView.prototype = {
 			
 			case "s":
 				view.lastPlayerMove = view.map.player.moveDown();
-				if (view.yOff+view.h < view.map.h && view.map.player.pos.y - view.yOff > view.h/2){
+				if (view.yOff+view.h < view.map.h && 
+						view.map.player.pos.y - view.yOff > view.h/2 &&
+						(view.lastPlayerMove[0] != 0 || view.lastPlayerMove[1] != 0)){
 					view.yOff++;
 					view.lastMove = [0,-1];
 				}
@@ -41,7 +45,9 @@ ZView.prototype = {
 				
 			case "d":
 				view.lastPlayerMove = view.map.player.moveRight();
-				if (view.xOff+view.w < view.map.w && view.map.player.pos.x - view.xOff > view.w/2){
+				if (view.xOff+view.w < view.map.w &&
+						view.map.player.pos.x - view.xOff > view.w/2 &&
+						(view.lastPlayerMove[0] != 0 || view.lastPlayerMove[1] != 0)){
 					view.xOff++;
 					view.lastMove = [-1,0];
 				}
@@ -49,7 +55,9 @@ ZView.prototype = {
 				
 			case "w":
 				view.lastPlayerMove = view.map.player.moveUp();
-				if (view.yOff > 0 && view.map.player.pos.y - view.yOff < view.h/2){
+				if (view.yOff > 0 &&
+						view.map.player.pos.y - view.yOff < view.h/2 &&
+						(view.lastPlayerMove[0] == 1 || view.lastPlayerMove[1] == 1)){
 					view.yOff--;
 					view.lastMove = [0,1];
 				}

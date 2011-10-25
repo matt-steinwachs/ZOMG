@@ -210,22 +210,22 @@ ZMap.prototype = {
 															"h": Math.floor(plots[y][x].h/2)
 														 };
 														 
-				var topRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w+1,
+				var topRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
 															"y": plots[y][x].y,
-															"w": Math.ceil(plots[y][x].w/2)-1,
+															"w": Math.ceil(plots[y][x].w/2)+1,
 															"h": Math.floor(plots[y][x].h/2)
 														 };
 														 
 				var botLeftSubPlot = {"x": plots[y][x].x,
-															"y": plots[y][x].y + topLeftSubPlot.h+1,
+															"y": plots[y][x].y + topLeftSubPlot.h,
 															"w": Math.floor(plots[y][x].w/2),
-															"h": Math.ceil(plots[y][x].h/2)-1
+															"h": Math.ceil(plots[y][x].h/2)+1
 														 };
 														 
-				var botRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w+1,
-															"y": plots[y][x].y + topLeftSubPlot.h+1,
-															"w": Math.ceil(plots[y][x].w/2)-1,
-															"h": Math.ceil(plots[y][x].h/2)-1
+				var botRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
+															"y": plots[y][x].y + topLeftSubPlot.h,
+															"w": Math.ceil(plots[y][x].w/2)+1,
+															"h": Math.ceil(plots[y][x].h/2)+1
 														 };
 														 
 				
@@ -236,10 +236,31 @@ ZMap.prototype = {
 			}
 		}
 		
+		//this.drawWall([0,1],10,"top","tallWoodFence");
+		//this.drawWall([0,4],10,"bottom","tallWoodFence");
+		
+		//this.drawWall([11,0],10,"left","tallWoodFence");
+		//this.drawWall([14,0],10,"right","tallWoodFence");
 		//console.log(plots);
 	},
 	
 	house: function(plot, dir){
+		//this.drawThreeSideFence(plot,dir);
+		if(dir != "left"){
+			this.drawWall([plot.x,plot.y],plot.h,"left","tallWoodFence");
+		}
+		if (dir != "right"){
+			this.drawWall([plot.x+plot.w-1,plot.y],plot.h,"right","tallWoodFence");
+		}	
+		if (dir != "up"){
+			this.drawWall([plot.x,plot.y],plot.w,"top","tallWoodFence");
+		}
+		if (dir != "down"){
+			this.drawWall([plot.x,plot.y+plot.h-1],plot.w,"bottom","tallWoodFence");
+		}
+	},
+	
+	drawThreeSideFence: function(plot, dir){
 		//Draw fences
 		for (var h=0; h <= plot.h; h++){
 			if(dir != "left"){
@@ -266,7 +287,33 @@ ZMap.prototype = {
 				this.terrainMap[plot.y + plot.h + 1][plot.x + w].nWall = new ZWall("tallWoodFence");
 			}
 		}
-		
 	},
 	
+	drawWall: function(start, length, side, type){
+		if (side == "top"){
+			for (var l=0; l < length; l++){
+					this.terrainMap[start[1]][start[0] + l].nWall = new ZWall(type);
+					if (start[1] > 0)
+						this.terrainMap[start[1]-1][start[0] + l].sWall = new ZWall(type);
+			}
+		} else if (side == "bottom"){
+			for (var l=0; l < length; l++){
+					this.terrainMap[start[1]][start[0]+l].sWall = new ZWall(type);
+					if (start[1] < this.h-1)
+						this.terrainMap[start[1]+1][start[0]+l].nWall = new ZWall(type);
+			}
+		} else if (side == "left"){
+			for (var l=0; l < length; l++){
+					this.terrainMap[start[1]+l][start[0]].wWall = new ZWall(type);
+					if (start[0] > 0)
+						this.terrainMap[start[1]+l][start[0]-1].eWall = new ZWall(type);
+			}
+		} else if (side == "right") {
+			for (var l=0; l < length; l++){
+					this.terrainMap[start[1]+l][start[0]].eWall = new ZWall(type);
+					if (start[0] < this.w-1)
+						this.terrainMap[start[1]+l][start[0]+1].wWall = new ZWall(type);
+			}
+		}
+	},
 }
