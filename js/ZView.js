@@ -18,8 +18,10 @@ function ZView(){
 ZView.prototype = {
 	keyCap: function(keyStroke){
 		var view = game.view;
+		var map = view.map;
 		var keyCode = (document.layers) ? keyStroke.which : event.keyCode;
 		var keyString = String.fromCharCode(keyCode).toLowerCase();
+		//console.log(keyStroke);
 		
 		switch(keyString){
 			case "a":
@@ -61,6 +63,14 @@ ZView.prototype = {
 					view.yOff--;
 					view.lastMove = [0,1];
 				}
+				break;
+			
+			case "l":
+				console.log("floor: "+map.terrainMap[map.player.pos.y][map.player.pos.x].type+"\n");
+				console.log("nWall: "+map.terrainMap[map.player.pos.y][map.player.pos.x].nWall.type+"\n");
+				console.log("sWall: "+map.terrainMap[map.player.pos.y][map.player.pos.x].sWall.type+"\n");
+				console.log("eWall: "+map.terrainMap[map.player.pos.y][map.player.pos.x].eWall.type+"\n");
+				console.log("wWall: "+map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.type+"\n");
 				break;
 			
 			default:

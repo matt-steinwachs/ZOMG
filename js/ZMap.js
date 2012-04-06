@@ -69,7 +69,7 @@ ZMap.prototype = {
 		
 		//Draw vertical roads at random intervals
 		var randVRoad = rand(0,15);
-			while (randVRoad < this.w){
+		while (randVRoad < this.w){
 			
 			if (Math.random() > 0.5) wideRoad = true;
 			else wideRoad = false;
@@ -245,19 +245,105 @@ ZMap.prototype = {
 	},
 	
 	house: function(plot, dir){
-		//this.drawThreeSideFence(plot,dir);
+		var building = {"x":null,
+										"y":null,
+										"h":null,
+										"w":null
+									 }
+		
+		//Draw fence
 		if(dir != "left"){
-			this.drawWall([plot.x,plot.y],plot.h,"left","tallWoodFence");
+			this.drawWall([plot.x,plot.y],plot.h,"left","tallWoodFence","tallWoodFence");
 		}
 		if (dir != "right"){
-			this.drawWall([plot.x+plot.w-1,plot.y],plot.h,"right","tallWoodFence");
+			this.drawWall([plot.x+plot.w-1,plot.y],plot.h,"right","tallWoodFence","tallWoodFence");
 		}	
 		if (dir != "up"){
-			this.drawWall([plot.x,plot.y],plot.w,"top","tallWoodFence");
+			this.drawWall([plot.x,plot.y],plot.w,"top","tallWoodFence","tallWoodFence");
 		}
 		if (dir != "down"){
-			this.drawWall([plot.x,plot.y+plot.h-1],plot.w,"bottom","tallWoodFence");
+			this.drawWall([plot.x,plot.y+plot.h-1],plot.w,"bottom","tallWoodFence","tallWoodFence");
 		}
+		
+		//calc random building attributes
+		if (dir == "up" || dir == "down"){
+			building.x = plot.x + rand(1,3);
+			building.y = plot.y + rand(2, (plot.h/10 +1));
+			building.h = plot.h - (building.y - plot.y) - 
+										rand(2, plot.h/10 + 1);
+			building.w = plot.w - (building.x - plot.x) - rand(1,3);
+		} else {
+			building.x = plot.x + rand(2,(plot.w/10 + 1));
+			building.y = plot.y + rand(1,3);
+			building.h = plot.h - (building.y - plot.y) - rand(1,3);
+			building.w = plot.w - (building.x - plot.x) - 
+										rand(2,(plot.w/10 + 1));
+		}
+		
+		//top wall
+		var randLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
+		this.drawWall([building.x,building.y-1],
+									randLength,
+									"bottom",
+									"woodExterior",
+									"drywallInterior"
+									);
+									
+		var tOffset = rand(0,2);
+		
+		if (tOffset == 1)
+			this.drawWall([building.x+randLength-
+											(this.terrainMap[building.y][building.x+randLength].nWall.type == "none" ? 1:0), 
+										 building.y],
+										1,
+										"right",
+										"woodExterior",
+										"drywallInterior"
+									 );
+		
+		this.drawWall([building.x+randLength+
+										(this.terrainMap[building.y+tOffset-1][building.x+randLength].nWall.type == "none" || tOffset == 0 ? 0:1),
+									building.y+tOffset-1],
+									building.w-randLength,
+									"bottom",
+									"woodExterior",
+									"drywallInterior"
+									)
+									
+		//right wall
+		randLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
+		this.drawWall([building.x+building.w-1-
+										(this.terrainMap[building.y+tOffset][building.x+building.w-1].nWall.type == "none" ? 1:0),
+									building.y+tOffset],
+									randLength,
+									"right",
+									"drywallInterior",
+									"woodExterior"
+									);
+		
+		var rOffset = rand(0,2);
+		
+		var xAdjusted = building.x+building.w-1-
+											(this.terrainMap[building.y+tOffset][building.x+building.w-1].nWall.type == "none" ? 1:0);
+		var yAdjust = this.terrainMap[building.y + randLength][xAdjusted].eWall.type == "none"? -1 : 0;
+		
+		if (rOffset == 1)
+			this.drawWall([xAdjusted, building.y + randLength + yAdjust],
+										1,
+										"bottom",
+										"drywallInterior",
+										"woodExterior"
+									 );
+		
+		this.drawWall([xAdjusted, building.y + randLength + yAdjust + 1],
+									 building.h-randLength-1,
+									 rOffset == 1 ? "left":"right",
+									 rOffset == 1 ? "woodExterior":"drywallInterior",
+									 rOffset == 1 ? "drywallInterior":"woodExterior"
+									);
+		
+		//this.drawWall([],
+									
 	},
 	
 	drawThreeSideFence: function(plot, dir){
@@ -289,31 +375,34 @@ ZMap.prototype = {
 		}
 	},
 	
-	drawWall: function(start, length, side, type){
+	drawWall: function(start, length, side, type1, type2){
 		if (side == "top"){
 			for (var l=0; l < length; l++){
-					this.terrainMap[start[1]][start[0] + l].nWall = new ZWall(type);
+					this.terrainMap[start[1]][start[0] + l].nWall = new ZWall(type1);
 					if (start[1] > 0)
-						this.terrainMap[start[1]-1][start[0] + l].sWall = new ZWall(type);
+						this.terrainMap[start[1]-1][start[0] + l].sWall = new ZWall(type2);
 			}
 		} else if (side == "bottom"){
 			for (var l=0; l < length; l++){
-					this.terrainMap[start[1]][start[0]+l].sWall = new ZWall(type);
+					this.terrainMap[start[1]][start[0]+l].sWall = new ZWall(type1);
 					if (start[1] < this.h-1)
-						this.terrainMap[start[1]+1][start[0]+l].nWall = new ZWall(type);
+						this.terrainMap[start[1]+1][start[0]+l].nWall = new ZWall(type2);
 			}
 		} else if (side == "left"){
 			for (var l=0; l < length; l++){
-					this.terrainMap[start[1]+l][start[0]].wWall = new ZWall(type);
+					this.terrainMap[start[1]+l][start[0]].wWall = new ZWall(type1);
 					if (start[0] > 0)
-						this.terrainMap[start[1]+l][start[0]-1].eWall = new ZWall(type);
+						this.terrainMap[start[1]+l][start[0]-1].eWall = new ZWall(type2);
 			}
 		} else if (side == "right") {
 			for (var l=0; l < length; l++){
-					this.terrainMap[start[1]+l][start[0]].eWall = new ZWall(type);
+					//console.log((start[1]+l)+"..."+start[0]);
+					this.terrainMap[start[1]+l][start[0]].eWall = new ZWall(type1);
 					if (start[0] < this.w-1)
-						this.terrainMap[start[1]+l][start[0]+1].wWall = new ZWall(type);
+						this.terrainMap[start[1]+l][start[0]+1].wWall = new ZWall(type2);
 			}
 		}
 	},
+	
+	
 }

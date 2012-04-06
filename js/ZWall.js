@@ -44,6 +44,32 @@ ZWall.prototype = {
 		
 	},
 	
+	woodExterior: function(){
+		this.color = "rgb(240, 240, 240)";
+		this.style = "solid";
+		this.pass = false;
+		this.vis = false;
+	},
+	
+	woodInterior: function(){
+		
+	},
+	
+	metalExterior: function(){
+		
+	},
+	
+	metalInterior: function(){
+		
+	},
+	
+	drywallInterior: function(){
+		this.color = "rgb(255, 255, 255)";
+		this.style = "solid";
+		this.pass = false;
+		this.vis = false;
+	}
+	
 	
 
 }
