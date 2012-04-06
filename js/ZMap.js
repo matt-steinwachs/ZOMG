@@ -66,6 +66,7 @@ ZMap.prototype = {
 		var plots = []; 		//{upperLeftCornerX:int, upperLeftCornerY:int, width:int, height:int}
 		var vertRoads = []; //{centerX:int, wideOrNot:bool}
 		var horRoads = []; 	//{centerY:int, wideOrNot:bool}
+		var buildings = [];
 		
 		//Draw vertical roads at random intervals
 		var randVRoad = rand(0,15);
@@ -229,19 +230,15 @@ ZMap.prototype = {
 														 };
 														 
 				
-				this.house(topLeftSubPlot, dirs[rand(0,2)*2]);
-				this.house(topRightSubPlot, dirs[rand(0,2)*3]);
-				this.house(botLeftSubPlot, dirs[rand(1,3)]);
-				this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]);
+				buildings.push(this.house(topLeftSubPlot, dirs[rand(0,2)*2]));
+				buildings.push(this.house(topRightSubPlot, dirs[rand(0,2)*3]));
+				buildings.push(this.house(botLeftSubPlot, dirs[rand(1,3)]));
+				buildings.push(this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]));
 			}
 		}
 		
-		//this.drawWall([0,1],10,"top","tallWoodFence");
-		//this.drawWall([0,4],10,"bottom","tallWoodFence");
+		console.log(buildings);
 		
-		//this.drawWall([11,0],10,"left","tallWoodFence");
-		//this.drawWall([14,0],10,"right","tallWoodFence");
-		//console.log(plots);
 	},
 	
 	house: function(plot, dir){
@@ -270,14 +267,14 @@ ZMap.prototype = {
 			building.x = plot.x + rand(1,3);
 			building.y = plot.y + rand(2, (plot.h/10 +1));
 			building.h = plot.h - (building.y - plot.y) - 
-										rand(2, plot.h/10 + 1);
+										rand(2, plot.h/5 + 1);
 			building.w = plot.w - (building.x - plot.x) - rand(1,3);
 		} else {
 			building.x = plot.x + rand(2,(plot.w/10 + 1));
 			building.y = plot.y + rand(1,3);
 			building.h = plot.h - (building.y - plot.y) - rand(1,3);
 			building.w = plot.w - (building.x - plot.x) - 
-										rand(2,(plot.w/10 + 1));
+										rand(2,(plot.w/5 + 1));
 		}
 		
 		//top wall
@@ -341,9 +338,58 @@ ZMap.prototype = {
 									 rOffset == 1 ? "woodExterior":"drywallInterior",
 									 rOffset == 1 ? "drywallInterior":"woodExterior"
 									);
-		
-		//this.drawWall([],
 									
+		//left wall
+		randLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
+		this.drawWall([building.x,building.y],
+									randLength,
+									"left",
+									"drywallInterior",
+									"woodExterior"
+								 );
+									
+		var lOffset = rand(0,2);
+		
+		if (lOffset == 1)
+			this.drawWall([building.x, building.y+randLength],
+										1,
+										"top",
+										"woodExterior",
+										"drywallInterior"
+									 );
+		
+		this.drawWall([building.x,building.y+randLength],
+									building.h-randLength,
+									lOffset == 1 ? "right" : "left",
+									lOffset == 1 ? "woodExterior" : "drywallInterior",
+									lOffset == 1 ? "drywallInterior" : "woodExterior"
+								 );
+									
+		//bottom wall
+		randLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
+		this.drawWall([building.x+lOffset, building.y+building.h],
+									randLength,//building.w-lOffset-rOffset,
+									"top",
+									"woodExterior",
+									"drywallInterior"
+								 );
+		
+		if (tOffset == 0)
+			this.drawWall([building.x+lOffset+randLength, building.y+building.h-1],
+										1,
+										"left",
+										"woodExterior",
+										"drywallInterior"
+									 );
+		
+		this.drawWall([building.x+lOffset+randLength, building.y+building.h-1],
+										building.w-randLength-lOffset-rOffset,
+										tOffset == 0 ? "top" : "bottom",
+										tOffset == 0 ? "woodExterior" : "drywallInterior",
+										tOffset == 0 ? "drywallInterior" :"woodExterior"  
+									 );
+									 
+		return building;
 	},
 	
 	drawThreeSideFence: function(plot, dir){
