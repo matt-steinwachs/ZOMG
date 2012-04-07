@@ -5,3 +5,11 @@ function rand(lo, hi){
 	else 
 		return Math.random()*(lo-hi)+hi;
 }
+
+//traverses an enclosed area or area within a limit
+//can traverse through walls with sight or not
+//and applies a function to terrain if provided
+function dijkstra(func, vis, limit){
+	
+	
+}

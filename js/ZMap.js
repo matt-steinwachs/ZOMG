@@ -66,7 +66,7 @@ ZMap.prototype = {
 		var plots = []; 		//{upperLeftCornerX:int, upperLeftCornerY:int, width:int, height:int}
 		var vertRoads = []; //{centerX:int, wideOrNot:bool}
 		var horRoads = []; 	//{centerY:int, wideOrNot:bool}
-		var buildings = [];
+		var buildings = [];	//{upperLeftCornerX:int, upperLeftCornerY:int, width:int, height:int}
 		
 		//Draw vertical roads at random intervals
 		var randVRoad = rand(0,15);
@@ -105,7 +105,7 @@ ZMap.prototype = {
 				}
 			}
 			
-			randVRoad += rand(40, 61);
+			randVRoad += rand(30, 51);
 		}
 		
 		//Draw horizontal roads at random intervals
@@ -162,7 +162,7 @@ ZMap.prototype = {
 							this.terrainMap[randHRoad+2][i] = new ZTerrain("sidewalk");
 				}
 			}
-			randHRoad += rand(40, 61);
+			randHRoad += rand(30, 51);
 		}
 		
 		for (var y=1; y < horRoads.length; y++){
@@ -179,27 +179,6 @@ ZMap.prototype = {
 			}
 		}
 		
-		
-		//Draw tall fences around all non-edge plots.
-		/*
-		for (var y=1; y < plots.length; y++){
-			for (var x=0; x < plots[y].length; x++){
-				for (var h=0; h <= plots[y][x].h; h++){
-					this.terrainMap[plots[y][x].y+h][plots[y][x].x].wWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y+h][plots[y][x].x-1].eWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y+h][plots[y][x].x + plots[y][x].w].eWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y+h][plots[y][x].x + plots[y][x].w + 1].wWall = new ZWall("tallWoodFence");
-				}
-				
-				for (var w=0; w <= plots[y][x].w; w++){
-					this.terrainMap[plots[y][x].y][plots[y][x].x + w].nWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y-1][plots[y][x].x + w].sWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y + plots[y][x].h][plots[y][x].x + w].sWall = new ZWall("tallWoodFence");
-					this.terrainMap[plots[y][x].y + plots[y][x].h + 1][plots[y][x].x + w].nWall = new ZWall("tallWoodFence");
-				}
-			}
-		}
-		*/
 		var dirs = ["up","down","left","right"];
 		
 		//draw four houses on a plot
@@ -236,9 +215,6 @@ ZMap.prototype = {
 				buildings.push(this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]));
 			}
 		}
-		
-		console.log(buildings);
-		
 	},
 	
 	house: function(plot, dir){
