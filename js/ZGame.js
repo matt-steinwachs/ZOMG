@@ -1,17 +1,15 @@
 function ZGame(){
-	//console.log("new ZGame");
 	this.view = new ZView();
+	this.menu = new ZMenu();
 }
 
 ZGame.prototype = {
-	
 	
 }
 
 var game = {};
 
 var load = function(){
-	//console.log("load");
 	game = new ZGame();
 };
 

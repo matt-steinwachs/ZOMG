@@ -7,7 +7,6 @@ function ZView(){
 	this.lastPlayerMove = [0,0];
 	
 	this.map = new ZMap();
-	this.canvas = [];
 	this.initView();
 	this.render();
 	
@@ -21,7 +20,6 @@ ZView.prototype = {
 		var map = view.map;
 		var keyCode = (document.layers) ? keyStroke.which : event.keyCode;
 		var keyString = String.fromCharCode(keyCode).toLowerCase();
-		//console.log(keyStroke);
 		
 		switch(keyString){
 			case "a":
@@ -79,13 +77,19 @@ ZView.prototype = {
 		view.render();
 	},
 	
+	reinitView: function(){
+		$('#view').html("");
+		this.initView();
+		this.render();
+	},
+	
 	initView: function(){
 		var string = "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0px\">";
 		
 		for (var y=0; y<this.h; y++){
 			string+="<tr>"
 			for(var x=0; x<this.w; x++){
-				string += "<td class=\"cell\" id=\"cell"+x+"-"+y+"\"></td>";
+				string += "<td class=\"cell\" id=\"cell"+x+"-"+y+"\"  align=\"center\" valign=\"middle\"></td>";
 			}
 			string += "</tr>";
 		}
@@ -95,7 +99,7 @@ ZView.prototype = {
 		
 		for (var y=0; y<this.h; y++){
 			for(var x=0; x<this.w; x++){
-				var display = this.map.getAppearance(x,y);
+				var display = this.map.getAppearance(x+this.xOff,y+this.yOff);
 				$("#cell"+x+"-"+y).css("color", display.color)
 													.css("border-top", "1px "+
 																						display.nWall.style+" "+
