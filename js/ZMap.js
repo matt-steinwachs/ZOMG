@@ -12,10 +12,11 @@ function ZMap(){
 	this.randomTown();
 }
 
-
-
 ZMap.prototype = {
 	getAppearance: function(x,y){
+		if (x < 0 || y < 0 || x >= this.w || y >= this.h)
+			return null;
+		
 		var obj = {};
 		
 		if (this.actorMap[y][x] != null){
@@ -184,35 +185,37 @@ ZMap.prototype = {
 		//draw four houses on a plot
 		for (var y=1; y < plots.length; y++){
 			for (var x=0; x < plots[y].length; x++){
-				var topLeftSubPlot = {"x": plots[y][x].x,
-															"y": plots[y][x].y,
-															"w": Math.floor(plots[y][x].w/2),
-															"h": Math.floor(plots[y][x].h/2)
-														 };
-														 
-				var topRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
-															"y": plots[y][x].y,
-															"w": Math.ceil(plots[y][x].w/2)+1,
-															"h": Math.floor(plots[y][x].h/2)
-														 };
-														 
-				var botLeftSubPlot = {"x": plots[y][x].x,
-															"y": plots[y][x].y + topLeftSubPlot.h,
-															"w": Math.floor(plots[y][x].w/2),
-															"h": Math.ceil(plots[y][x].h/2)+1
-														 };
-														 
-				var botRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
-															"y": plots[y][x].y + topLeftSubPlot.h,
-															"w": Math.ceil(plots[y][x].w/2)+1,
-															"h": Math.ceil(plots[y][x].h/2)+1
-														 };
-														 
-				
-				buildings.push(this.house(topLeftSubPlot, dirs[rand(0,2)*2]));
-				buildings.push(this.house(topRightSubPlot, dirs[rand(0,2)*3]));
-				buildings.push(this.house(botLeftSubPlot, dirs[rand(1,3)]));
-				buildings.push(this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]));
+				//if (rand(0,2)){
+					var topLeftSubPlot = {"x": plots[y][x].x,
+																"y": plots[y][x].y,
+																"w": Math.floor(plots[y][x].w/2),
+																"h": Math.floor(plots[y][x].h/2)
+															 };
+															 
+					var topRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
+																"y": plots[y][x].y,
+																"w": Math.ceil(plots[y][x].w/2)+1,
+																"h": Math.floor(plots[y][x].h/2)
+															 };
+															 
+					var botLeftSubPlot = {"x": plots[y][x].x,
+																"y": plots[y][x].y + topLeftSubPlot.h,
+																"w": Math.floor(plots[y][x].w/2),
+																"h": Math.ceil(plots[y][x].h/2)+1
+															 };
+															 
+					var botRightSubPlot = {"x": plots[y][x].x + topLeftSubPlot.w,
+																"y": plots[y][x].y + topLeftSubPlot.h,
+																"w": Math.ceil(plots[y][x].w/2)+1,
+																"h": Math.ceil(plots[y][x].h/2)+1
+															 };
+															 
+					
+					buildings.push(this.house(topLeftSubPlot, dirs[rand(0,2)*2]));
+					buildings.push(this.house(topRightSubPlot, dirs[rand(0,2)*3]));
+					buildings.push(this.house(botLeftSubPlot, dirs[rand(1,3)]));
+					buildings.push(this.house(botRightSubPlot, dirs[rand(0,2)*2 +1]));
+				//}
 			}
 		}
 	},
@@ -254,19 +257,28 @@ ZMap.prototype = {
 		}
 		
 		//top wall
-		var randLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
+		var tRandLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
 		this.drawWall([building.x,building.y-1],
-									randLength,
+									tRandLength - ((dir == "up" || dir == "down")?1:0),
 									"bottom",
 									"woodExterior",
 									"drywallInterior"
 									);
 									
+		//top door
+		if (dir == "up" || dir == "down")
+			this.drawWall([building.x+tRandLength-1,building.y-1],
+									1,
+									"bottom",
+									"doorOpen",
+									"doorOpen"
+									);
+									
 		var tOffset = rand(0,2);
 		
 		if (tOffset == 1)
-			this.drawWall([building.x+randLength-
-											(this.terrainMap[building.y][building.x+randLength].nWall.type == "none" ? 1:0), 
+			this.drawWall([building.x+tRandLength-
+											(this.terrainMap[building.y][building.x+tRandLength].nWall.type == "none" ? 1:0), 
 										 building.y],
 										1,
 										"right",
@@ -274,21 +286,21 @@ ZMap.prototype = {
 										"drywallInterior"
 									 );
 		
-		this.drawWall([building.x+randLength+
-										(this.terrainMap[building.y+tOffset-1][building.x+randLength].nWall.type == "none" || tOffset == 0 ? 0:1),
+		this.drawWall([building.x+tRandLength+
+										(this.terrainMap[building.y+tOffset-1][building.x+tRandLength].nWall.type == "none" || tOffset == 0 ? 0:1),
 									building.y+tOffset-1],
-									building.w-randLength,
+									building.w-tRandLength,
 									"bottom",
 									"woodExterior",
 									"drywallInterior"
 									)
 									
 		//right wall
-		randLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
+		var rRandLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
 		this.drawWall([building.x+building.w-1-
 										(this.terrainMap[building.y+tOffset][building.x+building.w-1].nWall.type == "none" ? 1:0),
 									building.y+tOffset],
-									randLength,
+									rRandLength,
 									"right",
 									"drywallInterior",
 									"woodExterior"
@@ -298,27 +310,27 @@ ZMap.prototype = {
 		
 		var xAdjusted = building.x+building.w-1-
 											(this.terrainMap[building.y+tOffset][building.x+building.w-1].nWall.type == "none" ? 1:0);
-		var yAdjust = this.terrainMap[building.y + randLength][xAdjusted].eWall.type == "none"? -1 : 0;
+		var yAdjust = this.terrainMap[building.y + rRandLength][xAdjusted].eWall.type == "none"? -1 : 0;
 		
 		if (rOffset == 1)
-			this.drawWall([xAdjusted, building.y + randLength + yAdjust],
+			this.drawWall([xAdjusted, building.y + rRandLength + yAdjust],
 										1,
 										"bottom",
 										"drywallInterior",
 										"woodExterior"
 									 );
 		
-		this.drawWall([xAdjusted, building.y + randLength + yAdjust + 1],
-									 building.h-randLength-1,
+		this.drawWall([xAdjusted, building.y + rRandLength + yAdjust + 1],
+									 building.h-rRandLength-1,
 									 rOffset == 1 ? "left":"right",
 									 rOffset == 1 ? "woodExterior":"drywallInterior",
 									 rOffset == 1 ? "drywallInterior":"woodExterior"
 									);
 									
 		//left wall
-		randLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
+		var lRandLength = parseInt(building.h/2+rand(-(building.h/10+1),building.h/10));
 		this.drawWall([building.x,building.y],
-									randLength,
+									lRandLength,
 									"left",
 									"drywallInterior",
 									"woodExterior"
@@ -327,39 +339,39 @@ ZMap.prototype = {
 		var lOffset = rand(0,2);
 		
 		if (lOffset == 1)
-			this.drawWall([building.x, building.y+randLength],
+			this.drawWall([building.x, building.y+lRandLength],
 										1,
 										"top",
 										"woodExterior",
 										"drywallInterior"
 									 );
 		
-		this.drawWall([building.x,building.y+randLength],
-									building.h-randLength,
+		this.drawWall([building.x,building.y+lRandLength],
+									building.h-lRandLength,
 									lOffset == 1 ? "right" : "left",
 									lOffset == 1 ? "woodExterior" : "drywallInterior",
 									lOffset == 1 ? "drywallInterior" : "woodExterior"
 								 );
 									
 		//bottom wall
-		randLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
+		var bRandLength = parseInt(building.w/2+rand(-(building.w/10+1),building.w/10));
 		this.drawWall([building.x+lOffset, building.y+building.h],
-									randLength,//building.w-lOffset-rOffset,
+									bRandLength,//building.w-lOffset-rOffset,
 									"top",
 									"woodExterior",
 									"drywallInterior"
 								 );
 		
 		if (tOffset == 0)
-			this.drawWall([building.x+lOffset+randLength, building.y+building.h-1],
+			this.drawWall([building.x+lOffset+bRandLength, building.y+building.h-1],
 										1,
 										"left",
 										"woodExterior",
 										"drywallInterior"
 									 );
 		
-		this.drawWall([building.x+lOffset+randLength, building.y+building.h-1],
-										building.w-randLength-lOffset-rOffset,
+		this.drawWall([building.x+lOffset+bRandLength, building.y+building.h-1],
+										building.w-bRandLength-lOffset-rOffset,
 										tOffset == 0 ? "top" : "bottom",
 										tOffset == 0 ? "woodExterior" : "drywallInterior",
 										tOffset == 0 ? "drywallInterior" :"woodExterior"  
@@ -368,34 +380,34 @@ ZMap.prototype = {
 		return building;
 	},
 	
-	drawThreeSideFence: function(plot, dir){
-		//Draw fences
-		for (var h=0; h <= plot.h; h++){
-			if(dir != "left"){
-				//left fence
-				this.terrainMap[plot.y+h][plot.x].wWall = new ZWall("tallWoodFence");
-				this.terrainMap[plot.y+h][plot.x-1].eWall = new ZWall("tallWoodFence");
-			}
-			if (dir != "right"){
-				//right fence
-				this.terrainMap[plot.y+h][plot.x + plot.w].eWall = new ZWall("tallWoodFence");
-				this.terrainMap[plot.y+h][plot.x + plot.w + 1].wWall = new ZWall("tallWoodFence");
-			}	
-		}
+	//drawThreeSideFence: function(plot, dir){
+		////Draw fences
+		//for (var h=0; h <= plot.h; h++){
+			//if(dir != "left"){
+				////left fence
+				//this.terrainMap[plot.y+h][plot.x].wWall = new ZWall("tallWoodFence");
+				//this.terrainMap[plot.y+h][plot.x-1].eWall = new ZWall("tallWoodFence");
+			//}
+			//if (dir != "right"){
+				////right fence
+				//this.terrainMap[plot.y+h][plot.x + plot.w].eWall = new ZWall("tallWoodFence");
+				//this.terrainMap[plot.y+h][plot.x + plot.w + 1].wWall = new ZWall("tallWoodFence");
+			//}	
+		//}
 		
-		for (var w=0; w <= plot.w; w++){
-			if (dir != "up"){
-				//top fence
-				this.terrainMap[plot.y][plot.x + w].nWall = new ZWall("tallWoodFence");
-				this.terrainMap[plot.y-1][plot.x + w].sWall = new ZWall("tallWoodFence");
-			}
-			if (dir != "down"){
-				//bottom fence
-				this.terrainMap[plot.y + plot.h][plot.x + w].sWall = new ZWall("tallWoodFence");
-				this.terrainMap[plot.y + plot.h + 1][plot.x + w].nWall = new ZWall("tallWoodFence");
-			}
-		}
-	},
+		//for (var w=0; w <= plot.w; w++){
+			//if (dir != "up"){
+				////top fence
+				//this.terrainMap[plot.y][plot.x + w].nWall = new ZWall("tallWoodFence");
+				//this.terrainMap[plot.y-1][plot.x + w].sWall = new ZWall("tallWoodFence");
+			//}
+			//if (dir != "down"){
+				////bottom fence
+				//this.terrainMap[plot.y + plot.h][plot.x + w].sWall = new ZWall("tallWoodFence");
+				//this.terrainMap[plot.y + plot.h + 1][plot.x + w].nWall = new ZWall("tallWoodFence");
+			//}
+		//}
+	//},
 	
 	drawWall: function(start, length, side, type1, type2){
 		if (side == "top"){

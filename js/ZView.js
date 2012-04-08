@@ -71,6 +71,48 @@ ZView.prototype = {
 				console.log("wWall: "+map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.type+"\n");
 				break;
 			
+			case "e":
+				if (map.terrainMap[map.player.pos.y][map.player.pos.x].nWall.type == "doorOpen"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].nWall.closeDoor();
+					map.terrainMap[map.player.pos.y-1][map.player.pos.x].sWall.closeDoor();
+				}
+				else if (map.terrainMap[map.player.pos.y][map.player.pos.x].nWall.type == "doorClosed"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].nWall.openDoor();
+					map.terrainMap[map.player.pos.y-1][map.player.pos.x].sWall.openDoor();
+				}
+				
+				if (map.terrainMap[map.player.pos.y][map.player.pos.x].sWall.type == "doorOpen"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].sWall.closeDoor();
+					map.terrainMap[map.player.pos.y+1][map.player.pos.x].nWall.closeDoor();
+				}
+				else if (map.terrainMap[map.player.pos.y][map.player.pos.x].sWall.type == "doorClosed"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].sWall.openDoor();
+					map.terrainMap[map.player.pos.y+1][map.player.pos.x].nWall.openDoor();
+				}
+				
+				if (map.terrainMap[map.player.pos.y][map.player.pos.x].eWall.type == "doorOpen"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].eWall.closeDoor();
+					map.terrainMap[map.player.pos.y][map.player.pos.x+1].wWall.closeDoor();
+				}
+				else if (map.terrainMap[map.player.pos.y][map.player.pos.x].eWall.type == "doorClosed"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].eWall.openDoor();
+					map.terrainMap[map.player.pos.y][map.player.pos.x+1].wWall.openDoor();
+				}
+				
+				if (map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.type == "doorOpen"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.closeDoor();
+					map.terrainMap[map.player.pos.y][map.player.pos.x-1].eWall.closeDoor();
+				}
+				else if (map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.type == "doorClosed"){
+					map.terrainMap[map.player.pos.y][map.player.pos.x].wWall.openDoor();
+					map.terrainMap[map.player.pos.y][map.player.pos.x-1].eWall.openDoor();
+				}
+				
+				view.lastMove = [0,0];
+				view.lastPlayerMove = [0,0];
+				
+				break;
+					
 			default:
 				break;
 		}
@@ -166,6 +208,20 @@ ZView.prototype = {
 				
 			}
 		}
+		var appearance = this.map.getAppearance(this.map.player.pos.x,
+																						this.map.player.pos.y);
+		
+		var appearanceN = this.map.getAppearance(this.map.player.pos.x,
+																						 this.map.player.pos.y-1);
+		
+		var appearanceS = this.map.getAppearance(this.map.player.pos.x,
+																						 this.map.player.pos.y+1);
+		
+		var appearanceW = this.map.getAppearance(this.map.player.pos.x-1,
+																						 this.map.player.pos.y);
+		
+		var appearanceE = this.map.getAppearance(this.map.player.pos.x+1,
+																						 this.map.player.pos.y);
 		
 		if (this.lastPlayerMove[0] != 0 || this.lastPlayerMove[1] != 0){
 			var nextPlayer = [this.map.player.pos.x-this.xOff,
@@ -176,19 +232,56 @@ ZView.prototype = {
 												
 			$("#cell"+nextPlayer[0]+"-"+nextPlayer[1]).css("color", this.map.player.color)
 																													.html(this.map.player.char);
-																													
+			
 			$("#cell"+lastPlayer[0]+"-"+lastPlayer[1])
 				.css("color", this.map.getAppearance(this.map.player.pos.x+this.lastPlayerMove[0],
 																						 this.map.player.pos.y+this.lastPlayerMove[1]).color)
-				
 				.html(this.map.getAppearance(this.map.player.pos.x+this.lastPlayerMove[0],
 																		 this.map.player.pos.y+this.lastPlayerMove[1]).char);
+			
+			if (appearanceE != null)
+				$("#cell"+(nextPlayer[0]+1)+"-"+nextPlayer[1])
+					.css("border-left-style", appearanceE.wWall.style);
+			
+			if (appearanceW != null)
+				$("#cell"+(nextPlayer[0]-1)+"-"+nextPlayer[1])
+					.css("border-right-style", appearanceW.eWall.style);
+			
+			if (appearanceS != null)
+				$("#cell"+nextPlayer[0]+"-"+(nextPlayer[1]+1))
+					.css("border-top-style", appearanceS.nWall.style);
+			
+			if (appearanceN != null)
+				$("#cell"+nextPlayer[0]+"-"+(nextPlayer[1]-1))
+					.css("border-bottom-style", appearanceN.sWall.style);
+		
 		} else {
 			var nextPlayer = [this.map.player.pos.x-this.xOff,
 												this.map.player.pos.y-this.yOff];
 												
 			$("#cell"+nextPlayer[0]+"-"+nextPlayer[1]).css("color", this.map.player.color)
-																													.html(this.map.player.char);
+																								.html(this.map.player.char)
+																								.css("border-left-style", appearance.wWall.style)
+																								.css("border-right-style", appearance.eWall.style)
+																								.css("border-top-style", appearance.nWall.style)
+																								.css("border-bottom-style", appearance.sWall.style)
+			
+			if (appearanceE != null)
+				$("#cell"+(nextPlayer[0]+1)+"-"+nextPlayer[1])
+					.css("border-left-style", appearanceE.wWall.style);
+			
+			if (appearanceW != null)
+				$("#cell"+(nextPlayer[0]-1)+"-"+nextPlayer[1])
+					.css("border-right-style", appearanceW.eWall.style);
+			
+			if (appearanceS != null)
+				$("#cell"+nextPlayer[0]+"-"+(nextPlayer[1]+1))
+					.css("border-top-style", appearanceS.nWall.style);
+			
+			if (appearanceN != null)
+				$("#cell"+nextPlayer[0]+"-"+(nextPlayer[1]-1))
+					.css("border-bottom-style", appearanceN.sWall.style);
+			
 		}
 		
 	},

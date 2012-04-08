@@ -10,6 +10,7 @@ function ZWall(type){
 }
 
 ZWall.prototype = {
+	//wall type initializers
 	none: function(){
 		this.color = "rgb(0, 0, 0)";
 		this.style = "solid";
@@ -34,14 +35,22 @@ ZWall.prototype = {
 	chainLinkFence: function(){
 		this.color = "rgb(191, 191, 191)";
 		this.style = "dashed";
+		this.pass = false;
+		this.vis = true;
 	},
 	
 	doorOpen: function(){
-		
+		this.color = "rgb(207, 186, 136)";
+		this.style = "dotted";
+		this.pass = true;
+		this.vis = false;
 	},
 	
 	doorClosed: function(){
-		
+		this.color = "rgb(207, 186, 136)";
+		this.style = "solid";
+		this.pass = false;
+		this.vis = false;
 	},
 	
 	woodExterior: function(){
@@ -68,8 +77,20 @@ ZWall.prototype = {
 		this.style = "solid";
 		this.pass = false;
 		this.vis = false;
-	}
+	},
 	
+	//type specific modifiers
+	openDoor: function(){
+		this.type = "doorOpen";
+		this.doorOpen();
+		
+	},
+	
+	closeDoor: function(){
+		this.type = "doorClosed";
+		this.doorClosed();
+		
+	},
 	
 
 }
